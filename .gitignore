@@ -74,4 +74,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # Ignored folders to prevent adding too many assets
-/[As]ssets/[Ii]gnore/*
+/[Aa]ssets/[Ii]gnore/*
+/[Aa]ssets/Ignore.meta
