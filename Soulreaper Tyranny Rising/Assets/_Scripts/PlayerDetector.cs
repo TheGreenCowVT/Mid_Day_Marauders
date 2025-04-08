@@ -1,62 +1,116 @@
-using System;
 using UnityEngine;
-using System.Collections.Generic;
 
 public class PlayerDetector : MonoBehaviour
 {
-    SphereCollider sphereCollider;
-    public bool playerIsDetected = false;
-    bool startDetectionCheck = false;
-    public float playerDetectionCooldown = 5f;
-    float currentCooldown = 0;
-    Transform player;
-    
-    public List<string> secondaryEnemies = new List<string>();
+    [SerializeField] private Transform _player;
+    [SerializeField] private float _forgetTime; // Used to determine when a target is forgotten
+    [SerializeField] private bool _playerDetected;
+    [SerializeField] private bool _inRange;
+    [SerializeField] private float _fov;
+    [SerializeField] private bool _insideFov;
+    [SerializeField] private float _lineOfSightRange;
+    [SerializeField] private bool _hasLOS;
+
+    [SerializeField] private float angleToPlayer;
+    [SerializeField] private Vector3 playerDir;
+    public LayerMask lineOfSightMask;
+
+    private float _currentForgetTime;
+    private SphereCollider _collider;
 
     private void Start()
     {
-        sphereCollider = GetComponent<SphereCollider>();
-        sphereCollider.enabled = false;
+        _playerDetected = false;
+        _inRange = false;
+        _currentForgetTime = 0;
     }
 
-    private void OnEnable()
+    private void OnValidate()
     {
-        startDetectionCheck = false;
-        playerIsDetected = false;
-        currentCooldown = 0;
+        _collider = GetComponent<SphereCollider>();
     }
 
     private void Update()
     {
-        // If we have spotted the player, the sphere collider is turned on, then we start a cooldown.
-        // After the cooldown if the player isn't around, set playerIsDetected to false, deactivate
-        // the sphere collider and wait until the player re-enters the sight cone. 
-        if(startDetectionCheck)
+        //if(_player == null)
+            //_player = GameManager.instance.GetPlayerTransform();
+
+        if (_inRange)
         {
-            currentCooldown += Time.deltaTime;
-            if(currentCooldown > playerDetectionCooldown )
+            playerDir = _player.transform.position - transform.position;
+            angleToPlayer = Vector3.Angle(playerDir, transform.forward);
+
+            Debug.DrawRay(transform.position, playerDir);
+
+            RaycastHit hit;
+            if(Physics.Raycast(transform.position, playerDir, out hit))
             {
-                if (!playerIsDetected)
+                if (hit.collider.CompareTag("Player"))
                 {
-                    sphereCollider.enabled = false;
-                    currentCooldown = 0;
-                    startDetectionCheck = false;
+                    _hasLOS = true;
                 }
+                else
+                {
+                    _hasLOS = false;
+                }
+            }
+            
+            if(angleToPlayer <= _fov)
+            {
+                _insideFov = true;
+            }
+            else
+            {
+                _insideFov = false;
+            }
+
+            _playerDetected = _insideFov | _hasLOS;
+        }
+
+        if (_playerDetected && !_inRange)
+        {
+            _currentForgetTime += Time.deltaTime;
+            if(_currentForgetTime >= _forgetTime)
+            {
+                // Forget
+                _playerDetected = false;
+                _inRange = false;
             }
         }
     }
-    
-    void OnTriggerEnter(Collider col)
+
+    private void OnTriggerStay(Collider other)
     {
-        if (col.CompareTag("Player") && !playerIsDetected)
+        if (other.CompareTag("Player"))
         {
-            player = col.transform;
-            currentCooldown = 0;
-            playerIsDetected = true;
-            startDetectionCheck = true;
-            sphereCollider.enabled = true;
+            _inRange = true;
         }
     }
-    
-    public Transform GetPlayer() => player;
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            _inRange = false;
+        }
+    }
+
+    public bool PlayerDetected() => _playerDetected;
+
+    public void SeePlayer()
+    {
+        _playerDetected = true;
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        float rayRange = _collider.radius;
+        float halfFOV = _fov / 2.0f;
+        Quaternion leftRayRotation = Quaternion.AngleAxis(-halfFOV, Vector3.up);
+        Quaternion rightRayRotation = Quaternion.AngleAxis(halfFOV, Vector3.up);
+        Vector3 leftRayDirection = leftRayRotation * transform.forward;
+        Vector3 rightRayDirection = rightRayRotation * transform.forward;
+        Gizmos.DrawRay(transform.position, leftRayDirection * rayRange);
+        Gizmos.DrawRay(transform.position, rightRayDirection * rayRange);
+    }
 }
