@@ -9,37 +9,37 @@ public class EnemyContext
     public EnemyContext(EntityStatus myStatus, NegativeStatus negativeStatus, NavMeshAgent agent, Animator animator, TargetDetector playerDetector, Transform transform, 
         EnemyAttack enemyAttack, EnemyManager enemyManager)
     {
-        _agent = agent;
-        _animator = animator;
-        _playerDetector = playerDetector;
-        _transform = transform;
-        _enemyAttack = enemyAttack;
-        _myStatus = myStatus;
-        _negativeStatus = negativeStatus;
-        _enemyManager = enemyManager;
+        this.agent = agent;
+        this.animator = animator;
+        this.playerDetector = playerDetector;
+        this.transform = transform;
+        this.enemyAttack = enemyAttack;
+        this.myStatus = myStatus;
+        this.negativeStatus = negativeStatus;
+        this.enemyManager = enemyManager;
     }
 
-    private EntityStatus _myStatus;
-    private Animator _animator;
-    private NavMeshAgent _agent;
-    [SerializeField] private TargetDetector _playerDetector;
-    private Transform _transform;
-    private Transform _currentTarget;
-    private EnemyAttack _enemyAttack;
-    private NegativeStatus _negativeStatus;
-    private EnemyManager _enemyManager;
+    private EntityStatus myStatus;
+    private Animator animator;
+    private NavMeshAgent agent;
+    [SerializeField] private TargetDetector playerDetector;
+    private Transform transform;
+    private Transform currentTarget;
+    private EnemyAttack enemyAttack;
+    private NegativeStatus negativeStatus;
+    private EnemyManager enemyManager;
     
-    public EntityStatus GetMyStatus() => _myStatus;
+    public EntityStatus GetMyStatus() => myStatus;
 
-    public Transform GetTransform() => _transform;
+    public Transform GetTransform() => transform;
     
-    public NavMeshAgent GetAgent() => _agent;
+    public NavMeshAgent GetAgent() => agent;
     
-    public Animator GetAnimator() => _animator;
+    public Animator GetAnimator() => animator;
 
-    public EnemyAttack GetEnemyAttack() => _enemyAttack;
+    public EnemyAttack GetEnemyAttack() => enemyAttack;
     
-    public TargetDetector GetTargetDetector() => _playerDetector;
+    public TargetDetector GetTargetDetector() => playerDetector;
 
-    public bool UsingState(EnemyManager.EnemyState state) => _enemyManager.myStates.Contains(state);
+    public bool UsingState(EnemyManager.EnemyState state) => enemyManager.myStates.Contains(state);
 }

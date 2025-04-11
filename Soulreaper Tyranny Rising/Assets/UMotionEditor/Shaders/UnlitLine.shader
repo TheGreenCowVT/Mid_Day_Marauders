@@ -2,8 +2,8 @@ Shader "UMotion Editor/Unlit Line"
 { 
     Properties 
     {
-		_Color("Line Color (RGB) Trans (A)", color) = (0, 0, 0, 1)
-		_Thickness("Line Thikness", Range(0, 4)) = 0.9
+		Color("Line Color (RGB) Trans (A)", color) = (0, 0, 0, 1)
+		Thickness("Line Thikness", Range(0, 4)) = 0.9
     }
 
     SubShader 
@@ -24,8 +24,8 @@ Shader "UMotion Editor/Unlit Line"
 
 			#include "UnityCG.cginc"
 
-			fixed4 _Color;
-			half _Thickness;
+			fixed4 Color;
+			half Thickness;
 
 			struct vInput
 			{
@@ -35,8 +35,8 @@ Shader "UMotion Editor/Unlit Line"
 
 			struct vOutput
 			{
-				float4 pos : SV_POSITION;
-				float uv_y : TEXCOORD0;
+				float4 pos : SVPOSITION;
+				float uvy : TEXCOORD0;
 			};
 
 			vOutput vert(vInput i)
@@ -44,17 +44,17 @@ Shader "UMotion Editor/Unlit Line"
 				vOutput o;
 
 				o.pos = UnityObjectToClipPos(i.vertex);
-				o.uv_y = i.texcoord.y;
+				o.uvy = i.texcoord.y;
 
 				return o;
 			}
 
-			fixed4 frag(vOutput i) : SV_Target 
+			fixed4 frag(vOutput i) : SVTarget 
 			{
-				half width = abs(ddx(i.uv_y)) + abs(ddy(i.uv_y));
-				half alpha = smoothstep(0, width * _Thickness, i.uv_y);
+				half width = abs(ddx(i.uvy)) + abs(ddy(i.uvy));
+				half alpha = smoothstep(0, width * Thickness, i.uvy);
 
-				return fixed4(_Color.x, _Color.y, _Color.z, 1 - alpha);
+				return fixed4(Color.x, Color.y, Color.z, 1 - alpha);
 			}
 
 			ENDCG

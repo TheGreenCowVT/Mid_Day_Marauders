@@ -1,11 +1,12 @@
 using UnityEngine;
 
-public class ChaseState : EnemyBaseState
+public class AgentChaseState : EnemyBaseState
 {
-    public ChaseState(EnemyContext context, EnemyManager.EnemyState key, float attackRange, float delay) 
+    public AgentChaseState(EnemyContext context, EnemyManager.EnemyState key, float attackRange, float moveSpeed, float delay) 
         : base(context, key)
     {
         this.attackRange = attackRange;
+        this.moveSpeed = moveSpeed;
         this.delay = delay;
     }
 
@@ -13,6 +14,7 @@ public class ChaseState : EnemyBaseState
     private float attackRange;
     private float delay;
     private float currentDelay;
+    private float moveSpeed;
 
     public override void EnterState()
     {
@@ -26,9 +28,10 @@ public class ChaseState : EnemyBaseState
         agent.stoppingDistance = attackRange;
         agent.updatePosition = false;
         agent.updateRotation = true;
+        agent.speed = moveSpeed;
         target = detector.GetTarget();
         agent.SetDestination(target.position);
-        animator.CrossFade("Locomotion", 0.02f);
+        animator.CrossFade("Run", 0.02f);
         currentDelay = 0;
     }
 
@@ -50,8 +53,6 @@ public class ChaseState : EnemyBaseState
             }
             currentDelay = 0;
         }
-        
-        //animator.SetFloat("forward", agent.velocity.magnitude);
     }
 
     public override EnemyManager.EnemyState GetNextState()

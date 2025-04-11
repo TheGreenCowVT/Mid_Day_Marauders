@@ -4,48 +4,48 @@ using UnityEngine;
 [RequireComponent(typeof(SphereCollider))]
 public class TargetDetector : MonoBehaviour
 {
-    [SerializeField] private Transform _target;
-    [SerializeField] private float _forgetTime; // Used to determine when a target is forgotten
-    [SerializeField] private bool _targetInSight;
-    [SerializeField] private bool _playerDetected;
-    [SerializeField] private bool _inRange;
-    [SerializeField] private float _fov;
-    [SerializeField] private bool _insideFov;
-    [SerializeField] private float _lineOfSightRange;
-    [SerializeField] private bool _hasLOS;
+    [SerializeField] private Transform target;
+    [SerializeField] private float forgetTime; // Used to determine when a target is forgotten
+    [SerializeField] private bool targetInSight;
+    [SerializeField] private bool playerDetected;
+    [SerializeField] private bool inRange;
+    [SerializeField] private float fov;
+    [SerializeField] private bool insideFov;
+    [SerializeField] private float lineOfSightRange;
+    [SerializeField] private bool hasLOS;
 
     [SerializeField] private float angleToTarget;
     [SerializeField] private Vector3 targetDir;
 
     public LayerMask lineOfSightMask;
 
-    private float _currentForgetTime;
-    private SphereCollider _collider;
+    private float currentForgetTime;
+    private SphereCollider collider;
 
     [SerializeField] private string[] validTargets;
 
     private void Start()
     {
-        _targetInSight = false;
-        _inRange = false;
-        _currentForgetTime = 0;
+        targetInSight = false;
+        inRange = false;
+        currentForgetTime = 0;
     }
 
     private void OnValidate()
     {
-        _collider = GetComponent<SphereCollider>();
-        _collider.enabled = true;
-        _collider.isTrigger = true;
+        collider = GetComponent<SphereCollider>();
+        collider.enabled = true;
+        collider.isTrigger = true;
     }
 
     private void Update()
     {
-        //if(_player == null)
-            //_player = GameManager.instance.GetPlayerTransform();
+        //if(player == null)
+            //player = GameManager.instance.GetPlayerTransform();
 
-        if (_inRange)
+        if (inRange)
         {
-            targetDir = _target.transform.position - transform.position;
+            targetDir = target.transform.position - transform.position;
             angleToTarget = Vector3.Angle(targetDir, transform.forward);
 
             Debug.DrawRay(transform.position, targetDir);
@@ -55,76 +55,76 @@ public class TargetDetector : MonoBehaviour
             {
                 if (validTargets.Contains(hit.collider.tag))
                 {
-                    _hasLOS = true;
+                    hasLOS = true;
                 }
                 else
                 {
-                    _hasLOS = false;
+                    hasLOS = false;
                 }
             }
             
-            if(angleToTarget <= _fov)
+            if(angleToTarget <= fov)
             {
-                _insideFov = true;
+                insideFov = true;
             }
             else
             {
-                _insideFov = false;
+                insideFov = false;
             }
 
-            _targetInSight = _insideFov | _hasLOS;
+            targetInSight = insideFov | hasLOS;
         }
 
-        if (!_inRange)
+        if (!inRange)
         {
-            _currentForgetTime += Time.deltaTime;
-            if(_currentForgetTime >= _forgetTime)
+            currentForgetTime += Time.deltaTime;
+            if(currentForgetTime >= forgetTime)
             {
                 // Forget
-                _targetInSight = false;
-                _playerDetected = false;
-                _target = null;
-                _inRange = false;
+                targetInSight = false;
+                playerDetected = false;
+                target = null;
+                inRange = false;
             }
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (validTargets.Contains(other.tag) && _target == null)
+        if (validTargets.Contains(other.tag) && target == null)
         {
-             _target = other.transform;
-            _inRange = true;
-            if(other.CompareTag("Player")) _playerDetected = true;
+             target = other.transform;
+            inRange = true;
+            if(other.CompareTag("Player")) playerDetected = true;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (validTargets.Contains(other.tag) && _target == other.transform)
+        if (validTargets.Contains(other.tag) && target == other.transform)
         {
-            _inRange = false;
+            inRange = false;
         }
     }
 
-    public bool PlayerDetected() => _playerDetected;
+    public bool PlayerDetected() => playerDetected;
 
     public void SeePlayer()
     {
         // var playerTransform = GameManager.instance.GetPlayerTransform();
-        // Set _target = playerTransform
-        // set _currentForgetTime = _forgetTime;
-        // Set _inRange = true
+        // Set target = playerTransform
+        // set currentForgetTime = forgetTime;
+        // Set inRange = true
     }
 
-    public bool HasTarget() => _targetInSight;
+    public bool HasTarget() => targetInSight;
 
-    public Transform GetTarget() => _target;
+    public Transform GetTarget() => target;
 
     void OnDrawGizmosSelected()
     {
-        float rayRange = _collider.radius;
-        float halfFOV = _fov / 2.0f;
+        float rayRange = collider.radius;
+        float halfFOV = fov / 2.0f;
         Quaternion leftRayRotation = Quaternion.AngleAxis(-halfFOV, Vector3.up);
         Quaternion rightRayRotation = Quaternion.AngleAxis(halfFOV, Vector3.up);
         Vector3 leftRayDirection = leftRayRotation * transform.forward;

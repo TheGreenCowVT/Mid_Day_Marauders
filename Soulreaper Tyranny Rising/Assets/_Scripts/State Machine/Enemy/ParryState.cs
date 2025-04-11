@@ -11,11 +11,11 @@ public class ParryState : EnemyBaseState
 
     public override void EnterState()
     {
-        var agent = _context.GetAgent();
-        var animator = _context.GetAnimator();
+        var agent = context.GetAgent();
+        var animator = context.GetAnimator();
 
         agent.isStopped = true;
-        agent.Warp(_context.GetTransform().position);
+        agent.Warp(context.GetTransform().position);
         animator.CrossFade(ParriedHash, 0.02f);
     }
     

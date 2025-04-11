@@ -4,10 +4,10 @@ public class EnemyBaseState : BaseState<EnemyManager.EnemyState>
 {
     public EnemyBaseState(EnemyContext context, EnemyManager.EnemyState key) : base(key)
     {
-        _context = context;
+        this.context = context;
     }
 
-    protected EnemyContext _context;
+    protected EnemyContext context;
     
     public override void EnterState()
     {

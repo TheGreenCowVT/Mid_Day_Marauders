@@ -9,7 +9,7 @@ public class GameData
         invertGamepadV;
 
     public int MaximumHypermodeAttacks;
-    public int Current_UpgradeResources;
+    public int CurrentUpgradeResources;
 
     public int MaxLifePoints;
     public int Evocation;
@@ -59,7 +59,7 @@ public class GameData
         CurseImmune = false;
 
         MaximumHypermodeAttacks = 3;
-        Current_UpgradeResources = 5;
+        CurrentUpgradeResources = 5;
     }
 }
 

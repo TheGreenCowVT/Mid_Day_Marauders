@@ -2,9 +2,9 @@ Shader "UMotion Editor/Unlit Dashed Line"
 { 
     Properties 
     {
-		_Color("Line Color (RGB) Trans (A)", color) = (0, 0, 0, 1)
-		_Thickness("Line Thikness", Range(0, 4)) = 0.9
-		_DashFrequency("Dash Frequency", Range(0, 150)) = 100
+		Color("Line Color (RGB) Trans (A)", color) = (0, 0, 0, 1)
+		Thickness("Line Thikness", Range(0, 4)) = 0.9
+		DashFrequency("Dash Frequency", Range(0, 150)) = 100
     }
 
     SubShader 
@@ -25,9 +25,9 @@ Shader "UMotion Editor/Unlit Dashed Line"
 
 			#include "UnityCG.cginc"
 
-			fixed4 _Color;
-			half _Thickness;
-			half _DashFrequency;
+			fixed4 Color;
+			half Thickness;
+			half DashFrequency;
 
 			struct vInput
 			{
@@ -37,7 +37,7 @@ Shader "UMotion Editor/Unlit Dashed Line"
 
 			struct vOutput
 			{
-				float4 pos : SV_POSITION;
+				float4 pos : SVPOSITION;
 				float2 uv : TEXCOORD0;
 			};
 
@@ -48,20 +48,20 @@ Shader "UMotion Editor/Unlit Dashed Line"
 				o.pos = UnityObjectToClipPos(i.vertex);
 				
 				o.uv = i.texcoord.xy;
-				o.uv.x *= length(float3(unity_ObjectToWorld[0].z, unity_ObjectToWorld[1].z, unity_ObjectToWorld[2].z));
+				o.uv.x *= length(float3(unityObjectToWorld[0].z, unityObjectToWorld[1].z, unityObjectToWorld[2].z));
 
 				return o;
 			}
 
-			fixed4 frag(vOutput i) : SV_Target 
+			fixed4 frag(vOutput i) : SVTarget 
 			{
-				half2 mass = half2(sin(i.uv.x * _DashFrequency), i.uv.y);
+				half2 mass = half2(sin(i.uv.x * DashFrequency), i.uv.y);
 
 				half2 width = abs(ddx(mass)) + abs(ddy(mass));
-				half2 smoothed = smoothstep(half2(0, 0), width * _Thickness, mass.xy);
+				half2 smoothed = smoothstep(half2(0, 0), width * Thickness, mass.xy);
 				half alpha = max(smoothed.x, smoothed.y);
 
-				return fixed4(_Color.x, _Color.y, _Color.z, 1 - alpha);
+				return fixed4(Color.x, Color.y, Color.z, 1 - alpha);
 			}
 
 			ENDCG

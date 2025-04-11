@@ -4,26 +4,26 @@ using System.Collections.Generic;
 
 public abstract class StateManager<EState> : MonoBehaviour where EState : Enum
 {
-    protected Dictionary<EState, BaseState<EState>> _states = new Dictionary<EState, BaseState<EState>>();
+    protected Dictionary<EState, BaseState<EState>> states = new Dictionary<EState, BaseState<EState>>();
     
-    protected BaseState<EState> _currentState;
-    public EState _state;
+    protected BaseState<EState> currentState;
+    public EState state;
 
-    protected bool _isTransitioning = false;
-    protected bool _isInitialized = false;
+    protected bool isTransitioning = false;
+    protected bool isInitialized = false;
     
     void Start()
     {
-        _currentState.EnterState();
+        currentState.EnterState();
     }
 
     public virtual void Update()
     {
-        if (!_isInitialized) return;
-        EState nextStateKey = _currentState.GetNextState();
-        if (!_isTransitioning && nextStateKey.Equals(_currentState.StateKey))
+        if (!isInitialized) return;
+        EState nextStateKey = currentState.GetNextState();
+        if (!isTransitioning && nextStateKey.Equals(currentState.StateKey))
         {
-            _currentState.UpdateState();
+            currentState.UpdateState();
         }
         else
         {
@@ -33,13 +33,13 @@ public abstract class StateManager<EState> : MonoBehaviour where EState : Enum
 
     public void TransistionToState(EState nextState)
     {
-        if (!_isInitialized) return;
+        if (!isInitialized) return;
         
-        _isTransitioning = true;
-        _currentState.ExitState();
-        _currentState = _states[nextState];
-        _state = nextState; // So we can see this in the editor
-        _currentState.EnterState();
-        _isTransitioning = false;
+        isTransitioning = true;
+        currentState.ExitState();
+        currentState = states[nextState];
+        state = nextState; // So we can see this in the editor
+        currentState.EnterState();
+        isTransitioning = false;
     }
 }

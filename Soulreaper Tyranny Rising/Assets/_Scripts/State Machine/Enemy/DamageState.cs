@@ -7,16 +7,16 @@ public class DamageState : EnemyBaseState
         
     }
 
-    private bool _reactionOver = false;
+    private bool reactionOver = false;
 
     public override void EnterState()
     {
-        var status = _context.GetMyStatus();
-        var animator = _context.GetAnimator();
-        var agent = _context.GetAgent();
+        var status = context.GetMyStatus();
+        var animator = context.GetAnimator();
+        var agent = context.GetAgent();
 
         agent.isStopped = true;
-        agent.Warp(_context.GetTransform().position);
+        agent.Warp(context.GetTransform().position);
         agent.updateRotation = false;
 
         if (status.HeavyFlinch())
@@ -64,15 +64,15 @@ public class DamageState : EnemyBaseState
         }
         
         status.HandleReaction();
-        _reactionOver = false;
+        reactionOver = false;
     }
 
     public override void UpdateState()
     {
-        var status = _context.GetMyStatus();
-        var animator = _context.GetAnimator();
+        var status = context.GetMyStatus();
+        var animator = context.GetAnimator();
         
-        if(animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f) _reactionOver = true;
+        if(animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f) reactionOver = true;
         
         if (status.HeavyFlinch())
         {
@@ -123,10 +123,10 @@ public class DamageState : EnemyBaseState
 
     public override EnemyManager.EnemyState GetNextState()
     {
-        var status = _context.GetMyStatus();
+        var status = context.GetMyStatus();
         
         if (!status.IsAlive()) return EnemyManager.EnemyState.Death;
-        if (_reactionOver) return EnemyManager.EnemyState.Idle;
+        if (reactionOver) return EnemyManager.EnemyState.Idle;
 
         return EnemyManager.EnemyState.Damage;
     }

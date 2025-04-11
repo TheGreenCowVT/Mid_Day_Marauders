@@ -2,8 +2,8 @@ Shader "UMotion Editor/Wires Only"
 { 
     Properties 
     {
-		_Color("Main Color (RGB)", color) = (1, 1, 1, 1)
-		_Size("Wire Size", Range(0, 4)) = 0.9
+		Color("Main Color (RGB)", color) = (1, 1, 1, 1)
+		Size("Wire Size", Range(0, 4)) = 0.9
     }
 
     SubShader 
@@ -24,8 +24,8 @@ Shader "UMotion Editor/Wires Only"
 
 			#include "UnityCG.cginc"
 
-			fixed4 _Color;
-			half _Size;
+			fixed4 Color;
+			half Size;
 
 			struct vInput
 			{
@@ -35,7 +35,7 @@ Shader "UMotion Editor/Wires Only"
 
 			struct vOutput
 			{
-				float4 pos : SV_POSITION;
+				float4 pos : SVPOSITION;
 				fixed3 wirecoord : TEXCOORD1;		
 			};
 
@@ -50,13 +50,13 @@ Shader "UMotion Editor/Wires Only"
 				return o;
 			}
 
-			fixed4 frag(vOutput i) : SV_Target 
+			fixed4 frag(vOutput i) : SVTarget 
 			{
 				half3 width = abs(ddx(i.wirecoord.xyz)) + abs(ddy(i.wirecoord.xyz));
-				half3 smoothed = smoothstep(half3(0, 0, 0), width * _Size, i.wirecoord.xyz);		
+				half3 smoothed = smoothstep(half3(0, 0, 0), width * Size, i.wirecoord.xyz);		
 	  			half wireAlpha = min(min(smoothed.x, smoothed.y), smoothed.z);
 
-				return fixed4(_Color.xyz, 1 - wireAlpha);
+				return fixed4(Color.xyz, 1 - wireAlpha);
 			}
 
 			ENDCG

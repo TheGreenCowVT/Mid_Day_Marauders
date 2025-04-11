@@ -11,15 +11,15 @@ public class AttackState : EnemyBaseState
     private readonly int QuickStabHash = Animator.StringToHash("Quick Stab");
     private readonly int JumpAttackHash = Animator.StringToHash("Jump Attack");
     private readonly int Combo1Hash = Animator.StringToHash("Combo 1");
-    private bool _attackOver;
+    private bool attackOver;
     
     public override void EnterState()
     {
         //Debug.Log("ATTACK STATE");
-        var agent = _context.GetAgent();
-        var animator = _context.GetAnimator();
-        var myStatus = _context.GetMyStatus();
-        var transform = _context.GetTransform();
+        var agent = context.GetAgent();
+        var animator = context.GetAnimator();
+        var myStatus = context.GetMyStatus();
+        var transform = context.GetTransform();
         
         agent.updateRotation = false;
         agent.Warp(transform.position);
@@ -46,15 +46,15 @@ public class AttackState : EnemyBaseState
             animator.CrossFade(Combo1Hash, 0.2f, 0, 0f);
         }
 
-        _attackOver = false;
+        attackOver = false;
     }
 
     public override void UpdateState()
     {
-        var attackController = _context.GetEnemyAttack();
-        var animator = _context.GetAnimator();
-        var target = _context.GetTargetDetector().GetTarget();
-        var transform = _context.GetTransform();
+        var attackController = context.GetEnemyAttack();
+        var animator = context.GetAnimator();
+        var target = context.GetTargetDetector().GetTarget();
+        var transform = context.GetTransform();
 
         if (!attackController.GetRotationLocked())
         {
@@ -74,22 +74,27 @@ public class AttackState : EnemyBaseState
 
         if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
-            _attackOver = true;
+            attackOver = true;
         }
     }
 
     public override EnemyManager.EnemyState GetNextState()
     {
-        var status = _context.GetMyStatus();
-        var useSpacing = _context.UsingState(EnemyManager.EnemyState.Spacing);
+        var status = context.GetMyStatus();
+        var useSpacing = context.UsingState(EnemyManager.EnemyState.Spacing);
+        var focusIdle = context.UsingState(EnemyManager.EnemyState.FocusIdle);
 
         if (!status.IsAlive()) return EnemyManager.EnemyState.Death;
 
         if (status.HeavyFlinch()) return EnemyManager.EnemyState.Damage;
         else if (status.Flinch()) return EnemyManager.EnemyState.Damage;
 
-        if (_attackOver && useSpacing) return EnemyManager.EnemyState.Spacing;
-        else return EnemyManager.EnemyState.Idle;
+        if (attackOver && useSpacing) return EnemyManager.EnemyState.Spacing;
+        if (attackOver && !useSpacing)
+        {
+            if (focusIdle) return EnemyManager.EnemyState.FocusIdle;
+            else return EnemyManager.EnemyState.Idle;
+        }
 
         return EnemyManager.EnemyState.Attack;
     }

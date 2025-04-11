@@ -11,8 +11,8 @@ public class FocusIdleState : EnemyBaseState
     public override void EnterState()
     {
         //Debug.Log("IDLE STATE");
-        var agent = _context.GetAgent();
-        var animator = _context.GetAnimator();
+        var agent = context.GetAgent();
+        var animator = context.GetAnimator();
 
         agent.isStopped = true;
         animator.CrossFade("Locomotion", 0.02f);
@@ -22,8 +22,8 @@ public class FocusIdleState : EnemyBaseState
 
     public override void UpdateState()
     {
-        var target = _context.GetTargetDetector().GetTarget();
-        var transform = _context.GetTransform();
+        var target = context.GetTargetDetector().GetTarget();
+        var transform = context.GetTransform();
 
         // Get direction to target(ignoring Y - axis difference)
         Vector3 direction = target.position - transform.position;
@@ -41,9 +41,9 @@ public class FocusIdleState : EnemyBaseState
 
     public override EnemyManager.EnemyState GetNextState()
     {
-        var detector = _context.GetTargetDetector();
-        var status = _context.GetMyStatus();
-        var chase = _context.UsingState(EnemyManager.EnemyState.Chase);
+        var detector = context.GetTargetDetector();
+        var status = context.GetMyStatus();
+        var chase = context.UsingState(EnemyManager.EnemyState.Chase);
 
 
         if (!status.IsAlive()) return EnemyManager.EnemyState.Death;

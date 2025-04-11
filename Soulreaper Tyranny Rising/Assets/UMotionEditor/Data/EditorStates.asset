@@ -16,5 +16,6 @@ MonoBehaviour:
     LoadedProjectGUID:
       valueInternal: 
     RecentlyOpenedProjectPath:
-      valueInternal: 
-    RecentlyOpenedProjectGUIDsList: []
+      valueInternal: Assets\Ignore\UMotion Projects
+    RecentlyOpenedProjectGUIDsList:
+    - valueInternal: 05163aab7ab1c384c8f6cc8d3d5dfb12

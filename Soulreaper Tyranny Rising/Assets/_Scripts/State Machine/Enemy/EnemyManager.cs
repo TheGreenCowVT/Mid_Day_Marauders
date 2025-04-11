@@ -12,6 +12,7 @@ public class EnemyManager : StateManager<EnemyManager.EnemyState>
         Idle,
         FocusIdle,
         Chase,
+        AgentChase,
         Attack,
         Defend,
         Spacing,
@@ -19,49 +20,54 @@ public class EnemyManager : StateManager<EnemyManager.EnemyState>
         Death
     }
 
-    private EntityStatus _myStatus;
-    private NegativeStatus _negativeStatus;
-    private NavMeshAgent _agent;
-    private Animator _animator;
-    private TargetDetector _playerDetector;
-    private EnemyAttack _enemyAttack;
-    [SerializeField] private EnemyContext _context;
-    [SerializeField] private float _attackRange = 1.5f;
-    private Vector2 _moveVelocity;
-    private Vector2 _smoothDeltaPosition;
-    public ParticleSystem _deathParticles;
+    private EntityStatus myStatus;
+    private NegativeStatus negativeStatus;
+    private NavMeshAgent agent;
+    private Animator animator;
+    private TargetDetector playerDetector;
+    private EnemyAttack enemyAttack;
+    [SerializeField] private EnemyContext context;
+    [SerializeField] private float attackRange = 1.5f;
+    [SerializeField] private float moveSpeed = 3f;
+    [SerializeField] private float delay = 0.25f;
+    private Vector2 moveVelocity;
+    private Vector2 smoothDeltaPosition;
+    public ParticleSystem deathParticles;
     public EnemyState[] myStates;
+    public bool useRootMotion;
 
     void Awake()
     {
-        _agent = GetComponent<NavMeshAgent>();
-        _animator = GetComponent<Animator>();
-        _playerDetector = GetComponentInChildren<TargetDetector>();
-        _myStatus = GetComponent<EntityStatus>();
-        _negativeStatus = GetComponent<NegativeStatus>();
-        _enemyAttack = GetComponent<EnemyAttack>();
+        agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
+        playerDetector = GetComponentInChildren<TargetDetector>();
+        myStatus = GetComponent<EntityStatus>();
+        negativeStatus = GetComponent<NegativeStatus>();
+        enemyAttack = GetComponent<EnemyAttack>();
     }
 
     void InitializeStates()
     {
-        _states = new Dictionary<EnemyState, BaseState<EnemyState>>();
+        states = new Dictionary<EnemyState, BaseState<EnemyState>>();
         
-        _states.Add(EnemyState.Idle, new IdleState(_context, EnemyState.Idle));
-        _states.Add(EnemyState.FocusIdle, new IdleState(_context, EnemyState.Idle));
-        _states.Add(EnemyState.Damage, new DamageState(_context, EnemyState.Damage));
-        _states.Add(EnemyState.Death, new DeathState(_context, EnemyState.Death,
-            _deathParticles));
+        states.Add(EnemyState.Idle, new IdleState(context, EnemyState.Idle));
+        states.Add(EnemyState.FocusIdle, new IdleState(context, EnemyState.Idle));
+        states.Add(EnemyState.Damage, new DamageState(context, EnemyState.Damage));
+        states.Add(EnemyState.Death, new DeathState(context, EnemyState.Death,
+            deathParticles));
 
-        if (myStates.Contains(EnemyState.Chase)) _states.Add(EnemyState.Chase, new ChaseState(_context, EnemyState.Chase, _attackRange));
+        if (myStates.Contains(EnemyState.Chase)) states.Add(EnemyState.Chase, new ChaseState(context, EnemyState.Chase, attackRange, delay));
 
-        if (myStates.Contains(EnemyState.Attack)) _states.Add(EnemyState.Attack, new AttackState(_context, EnemyState.Attack));
+        if (myStates.Contains(EnemyState.AgentChase)) states.Add(EnemyState.AgentChase, new AgentChaseState(context, EnemyState.Chase, attackRange, moveSpeed, delay));
 
-        if(myStates.Contains(EnemyState.Spacing)) _states.Add(EnemyState.Spacing, new SpacingState(_context, EnemyState.Spacing, _attackRange));
+        if (myStates.Contains(EnemyState.Attack)) states.Add(EnemyState.Attack, new AttackState(context, EnemyState.Attack));
+
+        if(myStates.Contains(EnemyState.Spacing)) states.Add(EnemyState.Spacing, new SpacingState(context, EnemyState.Spacing, attackRange));
     }
 
     void Start()
     {
-        _context = new EnemyContext(_myStatus, _negativeStatus, _agent, _animator, _playerDetector, transform, _enemyAttack, this);
+        context = new EnemyContext(myStatus, negativeStatus, agent, animator, playerDetector, transform, enemyAttack, this);
         InitializeStates();
     }
 
@@ -72,30 +78,30 @@ public class EnemyManager : StateManager<EnemyManager.EnemyState>
 
     void DelayActivate()
     {
-        _currentState = _states[EnemyState.Idle];
-        _isInitialized = true;
+        currentState = states[EnemyState.Idle];
+        isInitialized = true;
     }
 
     void OnAnimatorMove()
     {
-       Vector3 rootPosition = _animator.rootPosition;
-       rootPosition.y = _agent.nextPosition.y;
+       Vector3 rootPosition = animator.rootPosition;
+       rootPosition.y = agent.nextPosition.y;
        transform.position = rootPosition;
-       _agent.nextPosition = rootPosition;
+       agent.nextPosition = rootPosition;
     }
 
     public override void Update()
     {
         base.Update();
-        SynchronizeAnimatorAndAgent();
+        if(useRootMotion) SynchronizeAnimatorAndAgent();
     }
 
     private void SynchronizeAnimatorAndAgent()
     {
-        if(!_myStatus.IsAlive() || !_agent.isOnNavMesh) return;
+        if(!myStatus.IsAlive() || !agent.isOnNavMesh) return;
         
         
-        var worldDeltaPosition = _agent.nextPosition - transform.position;
+        var worldDeltaPosition = agent.nextPosition - transform.position;
         worldDeltaPosition.y = 0;
         
         float dx = Vector3.Dot(transform.right, worldDeltaPosition);
@@ -103,33 +109,33 @@ public class EnemyManager : StateManager<EnemyManager.EnemyState>
         var deltaPosition = new Vector2(dx, dy);
 
         var smooth = Mathf.Min(1, Time.deltaTime / 0.1f);
-        _smoothDeltaPosition = Vector2.Lerp(_smoothDeltaPosition, deltaPosition, smooth);
+        smoothDeltaPosition = Vector2.Lerp(smoothDeltaPosition, deltaPosition, smooth);
         
-        _moveVelocity = _smoothDeltaPosition / Time.deltaTime;
+        moveVelocity = smoothDeltaPosition / Time.deltaTime;
 
-        if (_agent.remainingDistance <= _agent.stoppingDistance)
+        if (agent.remainingDistance <= agent.stoppingDistance)
         {
-            _moveVelocity = Vector2.Lerp(
+            moveVelocity = Vector2.Lerp(
                 Vector2.zero,
-                _moveVelocity,
-                _agent.remainingDistance / _agent.stoppingDistance);
+                moveVelocity,
+                agent.remainingDistance / agent.stoppingDistance);
         }
 
-        if (_agent.remainingDistance > _agent.stoppingDistance)
+        if (agent.remainingDistance > agent.stoppingDistance)
         {
-            _animator.SetFloat("forward", _moveVelocity.magnitude);
+            animator.SetFloat("forward", moveVelocity.magnitude);
         }
         else
         {
-            _animator.SetFloat("forward", 0);
+            animator.SetFloat("forward", 0);
         }
 
         var deltaMagnitude = worldDeltaPosition.magnitude;
-        if (deltaMagnitude > _agent.radius )
+        if (deltaMagnitude > agent.radius )
         {
             transform.position = Vector3.Lerp(
-                _animator.rootPosition,
-                _agent.nextPosition,
+                animator.rootPosition,
+                agent.nextPosition,
                 smooth);
         }
     }

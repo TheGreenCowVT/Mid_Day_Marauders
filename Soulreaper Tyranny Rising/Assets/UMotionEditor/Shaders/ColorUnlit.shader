@@ -3,7 +3,7 @@
     Properties
     {
         // Color property for material inspector, default to white
-        _Color ("Main Color", Color) = (1,1,1,1)
+        Color ("Main Color", Color) = (1,1,1,1)
     }
     SubShader
     {
@@ -22,18 +22,18 @@
             // this time instead of using "appdata" struct, just spell inputs manually,
             // and instead of returning v2f struct, also just return a single output
             // float4 clip position
-            float4 vert (float4 vertex : POSITION) : SV_POSITION
+            float4 vert (float4 vertex : POSITION) : SVPOSITION
             {
                 return UnityObjectToClipPos(vertex);
             }
             
             // color from the material
-            fixed4 _Color;
+            fixed4 Color;
 
             // pixel shader, no inputs needed
-            fixed4 frag () : SV_Target
+            fixed4 frag () : SVTarget
             {
-                return _Color; // just return it
+                return Color; // just return it
             }
             ENDCG
         }

@@ -3,7 +3,7 @@ Shader "UMotion Editor/Vertex Color Unlit"
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
+		MainTex ("Texture", 2D) = "white" {}
 	}
 	 
 	Category
@@ -22,7 +22,7 @@ Shader "UMotion Editor/Vertex Color Unlit"
 		{
 			Pass
 			{
-				SetTexture [_MainTex]
+				SetTexture [MainTex]
 				{
 					Combine texture * primary DOUBLE
 				}

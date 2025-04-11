@@ -22,8 +22,8 @@ public class EntityStatus : MonoBehaviour
     public EnduranceUsed OnEnduranceUsed;
     public EnduranceGained OnEnduranceGained;
 
-    public SkinnedMeshRenderer _meshRenderer;
-    [SerializeField] private Material _flinchShieldMaterial;
+    public SkinnedMeshRenderer meshRenderer;
+    [SerializeField] private Material flinchShieldMaterial;
     public bool useFlinchShield = false;
 
     public int CurrentLifePoints;
@@ -46,11 +46,11 @@ public class EntityStatus : MonoBehaviour
 
     [SerializeField] protected List<ElementType> Weakness, Resistance, Immunity, Absorbtion;
 
-    [SerializeField] protected int Current_UpgradeResource;
+    [SerializeField] protected int CurrentUpgradeResource;
 
     public int CurrentUpgrades
     {
-        get { return Current_UpgradeResource; }
+        get { return CurrentUpgradeResource; }
     }
 
     [SerializeField] float ExponentialPower;
@@ -69,22 +69,20 @@ public class EntityStatus : MonoBehaviour
 
     public delegate void EntityDeath();
 
-    public event EntityDeath OnMyDeath;
-
-    [FormerlySerializedAs("_lightFlinch")]
+    [FormerlySerializedAs("lightFlinch")]
     [SerializeField]
-    private float _lightFlinchAmount;
+    private float lightFlinchAmount;
 
-    [FormerlySerializedAs("_heavyFlinch")]
+    [FormerlySerializedAs("heavyFlinch")]
     [SerializeField]
-    private float _heavyFlinchAmount;
-    [SerializeField] float _lightFlinchPercentage, _heavyFlinchPercentage;
+    private float heavyFlinchAmount;
+    [SerializeField] float lightFlinchPercentage, heavyFlinchPercentage;
 
-    private Vector3 _currentDamagePosition;
-    [SerializeField] private bool _flinch = false;
-    [SerializeField] private bool _heavyFlinch = false;
-    [SerializeField] private bool _ignoreDamage = false;
-    [SerializeField] private float _ignoreDamageTime = 0f;
+    private Vector3 currentDamagePosition;
+    [SerializeField] private bool flinch = false;
+    [SerializeField] private bool heavyFlinch = false;
+    [SerializeField] private bool ignoreDamage = false;
+    [SerializeField] private float ignoreDamageTime = 0f;
 
     public void Start()
     {
@@ -133,8 +131,8 @@ public class EntityStatus : MonoBehaviour
             OnStatusUpdate.Invoke();
         }
 
-        _lightFlinchAmount = MaxLifePoints.Value * _lightFlinchPercentage;
-        _heavyFlinchAmount = MaxLifePoints.Value * _heavyFlinchPercentage;
+        lightFlinchAmount = MaxLifePoints.Value * lightFlinchPercentage;
+        heavyFlinchAmount = MaxLifePoints.Value * heavyFlinchPercentage;
         CurrentFlinchShield = MaxFlinchShield;
     }
 
@@ -147,10 +145,10 @@ public class EntityStatus : MonoBehaviour
                 CurrentEndurancePoints = MaxEndurancePoints.Value;
         }
 
-        if (_ignoreDamage)
+        if (ignoreDamage)
         {
-            _ignoreDamageTime -= Time.deltaTime;
-            if (_ignoreDamageTime < 0) _ignoreDamage = false;
+            ignoreDamageTime -= Time.deltaTime;
+            if (ignoreDamageTime < 0) ignoreDamage = false;
         }
     }
 
@@ -166,20 +164,20 @@ public class EntityStatus : MonoBehaviour
 
     public virtual void UseSpark()
     {
-        Current_UpgradeResource--;
+        CurrentUpgradeResource--;
     }
 
     void IgnoreDamage(float time)
     {
-        _ignoreDamageTime = time;
-        _ignoreDamage = true;
+        ignoreDamageTime = time;
+        ignoreDamage = true;
     }
 
     #region Level Up
 
     public bool LevelUp(StatType type)
     {
-        if (Current_UpgradeResource == 0)
+        if (CurrentUpgradeResource == 0)
         {
             return false;
         }
@@ -727,17 +725,17 @@ public class EntityStatus : MonoBehaviour
 
     #region Damage Reaction
 
-    public bool Flinch() => _flinch;
+    public bool Flinch() => flinch;
 
-    public bool HeavyFlinch() => _heavyFlinch;
+    public bool HeavyFlinch() => heavyFlinch;
 
     public void HandleReaction()
     {
-        _flinch = false;
-        _heavyFlinch = false;
+        flinch = false;
+        heavyFlinch = false;
     }
 
-    public Vector3 GetDamagePosition() => _currentDamagePosition;
+    public Vector3 GetDamagePosition() => currentDamagePosition;
 
     public string GetRelativePosition(Vector3 position)
     {
@@ -762,11 +760,11 @@ public class EntityStatus : MonoBehaviour
             CurrentFlinchShield = amount;
 
             // Outline material is the last material
-            if (_flinchShieldMaterial == null)
-                _flinchShieldMaterial = _meshRenderer.materials[_meshRenderer.materials.Length - 1];
+            if (flinchShieldMaterial == null)
+                flinchShieldMaterial = meshRenderer.materials[meshRenderer.materials.Length - 1];
 
             // Activate outline material
-            _flinchShieldMaterial.SetFloat("_Enabled", 1);
+            flinchShieldMaterial.SetFloat("Enabled", 1);
         }
         else
         {
@@ -778,21 +776,21 @@ public class EntityStatus : MonoBehaviour
     {
         if (!Alive) return;
 
-        if (_ignoreDamage && amount < 0) return;
+        if (ignoreDamage && amount < 0) return;
 
         if (amount < 0) // Damage
         {
             CurrentLifePoints += amount;
-            _currentDamagePosition = point;
+            currentDamagePosition = point;
             CurrentFlinchShield += amount;
 
             if (CurrentFlinchShield <= 0)
             {
                 if (useFlinchShield)
-                    _flinchShieldMaterial.SetFloat("_Enabled", 0);
+                    flinchShieldMaterial.SetFloat("Enabled", 0);
 
-                if (Mathf.Abs(amount) >= _heavyFlinchAmount) _heavyFlinch = true;
-                else if (Mathf.Abs(amount) >= _lightFlinchAmount) _flinch = true;
+                if (Mathf.Abs(amount) >= heavyFlinchAmount) heavyFlinch = true;
+                else if (Mathf.Abs(amount) >= lightFlinchAmount) flinch = true;
             }
 
             //Display Damage Amount
@@ -800,7 +798,7 @@ public class EntityStatus : MonoBehaviour
         else // Healing
         {
             CurrentLifePoints += amount;
-            _currentDamagePosition = point;
+            currentDamagePosition = point;
             CurrentFlinchShield += amount;
             if (CurrentFlinchShield > MaxFlinchShield) CurrentFlinchShield = MaxFlinchShield;
             //Display Damage Amount
@@ -816,7 +814,7 @@ public class EntityStatus : MonoBehaviour
     public void TakeDamage(int amount)
     {
         if (!Alive) return;
-        if (_ignoreDamage && amount < 0) return;
+        if (ignoreDamage && amount < 0) return;
 
         CurrentLifePoints += amount;
     }

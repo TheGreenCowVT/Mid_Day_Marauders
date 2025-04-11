@@ -77,7 +77,7 @@ public class EntityStats : ScriptableObject
     bool PoisonImmune, BleedImmune;
 
     [SerializeField]
-    public int Current_UpgradeResourcesDropped;
+    public int CurrentUpgradeResourcesDropped;
 
     StatModifier
         TwentyPercentAdditivePri = new StatModifier(.20f, StatModType.PercentAdd),

@@ -10,7 +10,7 @@ public class CharacterStat
     protected bool isDirty = true;
     protected float lastBaseValue;
 
-    protected float _value;
+    protected float value;
     public virtual float Value
     {
         get
@@ -18,10 +18,10 @@ public class CharacterStat
             if (isDirty || lastBaseValue != BaseValue)
             {
                 lastBaseValue = BaseValue;
-                _value = CalculateFinalValue();
+                value = CalculateFinalValue();
                 isDirty = false;
             }
-            return _value;
+            return value;
         }
     }
 

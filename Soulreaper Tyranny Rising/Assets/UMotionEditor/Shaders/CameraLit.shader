@@ -2,9 +2,9 @@
 { 
     Properties 
     {
-		_Color("Main Color (RGB)", color) = (1, 1, 1, 1)
-		_WireColor("Wire Color (RGB) Trans (A)", color) = (0, 0, 0, 1)	
-		_WireSize("Wire Size", Range(0, 4)) = 0.9
+		Color("Main Color (RGB)", color) = (1, 1, 1, 1)
+		WireColor("Wire Color (RGB) Trans (A)", color) = (0, 0, 0, 1)	
+		WireSize("Wire Size", Range(0, 4)) = 0.9
     }
 
     SubShader 
@@ -21,9 +21,9 @@
 			
 		    #include "UnityCG.cginc"
 
-			fixed4 _Color;
-			fixed4 _WireColor;
-			half _WireSize;
+			fixed4 Color;
+			fixed4 WireColor;
+			half WireSize;
 
 			struct vInput
 			{
@@ -34,7 +34,7 @@
 
 			struct vOutput
 			{
-				float4 pos : SV_POSITION;
+				float4 pos : SVPOSITION;
 				fixed3 wirecoord : TEXCOORD1;
 				float3 lambert : TEXCOORD2;		
 			};
@@ -54,17 +54,17 @@
 				return o;
 			}
 
-			fixed4 frag(vOutput i) : SV_Target 
+			fixed4 frag(vOutput i) : SVTarget 
 			{
 				fixed4 outColor;
-				outColor.rgb = i.lambert * _Color;
+				outColor.rgb = i.lambert * Color;
 				outColor.a = 1.0;
 				 
 				half3 width = abs(ddx(i.wirecoord.xyz)) + abs(ddy(i.wirecoord.xyz));
-				half3 smoothed = smoothstep(half3(0, 0, 0), width * _WireSize, i.wirecoord.xyz);		
+				half3 smoothed = smoothstep(half3(0, 0, 0), width * WireSize, i.wirecoord.xyz);		
 	  			half wireAlpha = min(min(smoothed.x, smoothed.y), smoothed.z);	
 				
-				return lerp(lerp(outColor, _WireColor, _WireColor.a), outColor, wireAlpha);
+				return lerp(lerp(outColor, WireColor, WireColor.a), outColor, wireAlpha);
 			}
 
 			ENDCG

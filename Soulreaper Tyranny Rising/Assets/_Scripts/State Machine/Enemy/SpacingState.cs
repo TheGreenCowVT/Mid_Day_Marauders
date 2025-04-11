@@ -5,30 +5,30 @@ public class SpacingState : EnemyBaseState
     public SpacingState(EnemyContext context, EnemyManager.EnemyState key, float attackRange) 
         : base(context, key)
     {
-        _attackRange = attackRange;
+        this.attackRange = attackRange;
     }
 
-    private Transform _target;
-    private float _attackRange;
-    private float _delay = 0.25f;
-    private float _currentDelay;
+    private Transform target;
+    private float attackRange;
+    private float delay = 0.25f;
+    private float currentDelay;
 
     public override void EnterState()
     {
         //Debug.Log("CHASE STATE");
-        var agent = _context.GetAgent();
-        var detector = _context.GetTargetDetector();
-        var animator = _context.GetAnimator();
-        var transform = _context.GetTransform();
+        var agent = context.GetAgent();
+        var detector = context.GetTargetDetector();
+        var animator = context.GetAnimator();
+        var transform = context.GetTransform();
         
         agent.isStopped = false;
-        agent.stoppingDistance = _attackRange;
+        agent.stoppingDistance = attackRange;
         agent.updatePosition = false;
         agent.updateRotation = true;
-        _target = detector.GetTarget();
-        agent.SetDestination(_target.position);
+        target = detector.GetTarget();
+        agent.SetDestination(target.position);
         animator.CrossFade("Locomotion", 0.02f);
-        _currentDelay = 0;
+        currentDelay = 0;
         animator.SetFloat("forward", -1);
     }
 
@@ -38,10 +38,10 @@ public class SpacingState : EnemyBaseState
 
     public override void UpdateState()
     {
-        var animator = _context.GetAnimator();
+        var animator = context.GetAnimator();
         
-        _currentDelay += Time.deltaTime;
-        if (_currentDelay >= _delay)
+        currentDelay += Time.deltaTime;
+        if (currentDelay >= delay)
         {
             animator.SetFloat("forward", 0);
         }
@@ -49,9 +49,9 @@ public class SpacingState : EnemyBaseState
 
     public override EnemyManager.EnemyState GetNextState()
     {
-        var agent = _context.GetAgent();
+        var agent = context.GetAgent();
 
-        if (_currentDelay >= _delay) return EnemyManager.EnemyState.Chase;
+        if (currentDelay >= delay) return EnemyManager.EnemyState.Chase;
 
         return EnemyManager.EnemyState.Spacing;
     }
