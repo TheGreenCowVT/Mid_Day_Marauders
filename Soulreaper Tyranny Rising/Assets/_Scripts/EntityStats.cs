@@ -15,7 +15,7 @@ to these stats before the function will not allow any more points.
 When LevelUp is called it returns true/false. If a false is received, the GUI program should 
 alert the player in some way that they cannot raise the stat anymore.
 
-Status Effects - Positive and Negative effects that can only be activated by calling them on each
+Status Effects - Healing and Soul effects that can only be activated by calling them on each
 EntityStats object. Some effects will be listed but may not be implemented in EntityStats.
 
 Speed Up: Increases Movement Speed (and attack speed for enemies)

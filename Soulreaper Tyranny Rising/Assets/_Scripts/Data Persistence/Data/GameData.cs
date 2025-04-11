@@ -15,19 +15,15 @@ public class GameData
     public int MaxLifePoints, MaxEndurancePoints;
     public int Evocation;
     public int Violence;
-    public int EnergyProjection;
-    public int Thaumaturgy;
     public float PhysicalDefense;
     public float MagicalDefense;
-    public float BlockedDamagePercentage;
-    public int AmbientEnduranceGain;
 
     [SerializeField]
     public List<ElementType> Weakness, Resistance, Immunity, Absorbtion;
 
     public float ExponentialPower;
 
-    public bool PoisonImmune, DegenImmune, DrainImmune, FreezeImmune, CurseImmune;
+    public bool PoisonImmune, IgniteImmune, FreezeImmune, CurseImmune;
 
     /*
     StatModifier
@@ -42,12 +38,8 @@ public class GameData
         MaxEndurancePoints = 100;
         Evocation = 1;
         Violence = 1;
-        EnergyProjection = 1;
-        Thaumaturgy = 1;
         PhysicalDefense = 0.05f;
         MagicalDefense = 0.05f;
-        AmbientEnduranceGain = 1;
-        BlockedDamagePercentage = 0.5f;
 
         Weakness = new List<ElementType>();
         Resistance = new List<ElementType>();
@@ -66,8 +58,7 @@ public class GameData
         forceSlotThreeUnlocked = false;
 
         PoisonImmune = false;
-        DegenImmune = false;
-        DrainImmune = false;
+        IgniteImmune = false;
         FreezeImmune = false;
         CurseImmune = false;
 

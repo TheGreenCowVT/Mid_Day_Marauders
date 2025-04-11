@@ -18,7 +18,7 @@ public class EnemyManager : StateManager<EnemyManager.EnemyState>
     }
 
     private EntityStatus _myStatus;
-    private NegativeStatus _negativeStatus;
+    private SoulStatus _negativeStatus;
     private NavMeshAgent _agent;
     private Animator _animator;
     private TargetDetector _playerDetector;
@@ -35,7 +35,7 @@ public class EnemyManager : StateManager<EnemyManager.EnemyState>
         _animator = GetComponent<Animator>();
         _playerDetector = GetComponentInChildren<TargetDetector>();
         _myStatus = GetComponent<EntityStatus>();
-        _negativeStatus = GetComponent<NegativeStatus>();
+        _negativeStatus = GetComponent<SoulStatus>();
         _enemyAttack = GetComponent<EnemyAttack>();
     }
 

@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class EnemyContext 
 {
-    public EnemyContext(EntityStatus myStatus, NegativeStatus negativeStatus, NavMeshAgent agent, Animator animator, TargetDetector playerDetector, Transform transform, 
+    public EnemyContext(EntityStatus myStatus, SoulStatus negativeStatus, NavMeshAgent agent, Animator animator, TargetDetector playerDetector, Transform transform, 
         EnemyAttack enemyAttack)
     {
         _agent = agent;
@@ -24,7 +24,7 @@ public class EnemyContext
     private Transform _transform;
     private Transform _currentTarget;
     private EnemyAttack _enemyAttack;
-    private NegativeStatus _negativeStatus;
+    private SoulStatus _negativeStatus;
     
     public EntityStatus GetMyStatus() => _myStatus;
 

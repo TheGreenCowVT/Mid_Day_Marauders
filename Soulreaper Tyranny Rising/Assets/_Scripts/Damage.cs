@@ -4,18 +4,18 @@ using UnityEngine;
 public struct Damage
 {
     public ElementType ElementType;
-    public NegativeEffectType NegativeEffectType;
+    public SoulEffectType SoulEffectType;
     public EntityStatus myEntityStatus;
     public int attackPower, statusPower, statusBuild;
     public float attackPotencyMin, attackPotencyMax, pushForce;
     [Tooltip("Denotes if this attack will knockdown those struck")]
     public bool knockdown, push;
 
-    public Damage(EntityStatus sender, ElementType attackElement, NegativeEffectType negEffect, int atkPower, int stPower, float potencyMin, float potencyMax = 1f, int pushFrc = 0)
+    public Damage(EntityStatus sender, ElementType attackElement, SoulEffectType negEffect, int atkPower, int stPower, float potencyMin, float potencyMax = 1f, int pushFrc = 0)
     {
         myEntityStatus = sender;
         ElementType = attackElement;
-        NegativeEffectType = negEffect;
+        SoulEffectType = negEffect;
         attackPower = atkPower;
         statusPower = stPower;
         statusBuild = 0;

@@ -1,4 +1,4 @@
-﻿public enum NegativeEffectType
+﻿public enum SoulEffectType
 {
     Stunned = 0, 
     Ignite, 
