@@ -29,13 +29,18 @@ public class IdleState : EnemyBaseState
     {
         var detector = _context.GetTargetDetector();
         var status = _context.GetMyStatus();
+        var chase = _context.UsingState(EnemyManager.EnemyState.Chase);
+
         if (!status.IsAlive()) return EnemyManager.EnemyState.Death;
 
         if (status.HeavyFlinch()) return EnemyManager.EnemyState.Damage;
         else if (status.Flinch()) return EnemyManager.EnemyState.Damage;
-
-        if (!detector.HasTarget()) return EnemyManager.EnemyState.Chase;
         
+        if(chase)
+        {
+            if (detector.HasTarget()) return EnemyManager.EnemyState.Chase;
+        }
+
         return EnemyManager.EnemyState.Idle;
     }
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -5,8 +6,8 @@ using UnityEngine.AI;
 
 public class EnemyContext 
 {
-    public EnemyContext(EntityStatus myStatus, SoulStatus negativeStatus, NavMeshAgent agent, Animator animator, TargetDetector playerDetector, Transform transform, 
-        EnemyAttack enemyAttack)
+    public EnemyContext(EntityStatus myStatus, NegativeStatus negativeStatus, NavMeshAgent agent, Animator animator, TargetDetector playerDetector, Transform transform, 
+        EnemyAttack enemyAttack, EnemyManager enemyManager)
     {
         _agent = agent;
         _animator = animator;
@@ -15,6 +16,7 @@ public class EnemyContext
         _enemyAttack = enemyAttack;
         _myStatus = myStatus;
         _negativeStatus = negativeStatus;
+        _enemyManager = enemyManager;
     }
 
     private EntityStatus _myStatus;
@@ -24,7 +26,8 @@ public class EnemyContext
     private Transform _transform;
     private Transform _currentTarget;
     private EnemyAttack _enemyAttack;
-    private SoulStatus _negativeStatus;
+    private NegativeStatus _negativeStatus;
+    private EnemyManager _enemyManager;
     
     public EntityStatus GetMyStatus() => _myStatus;
 
@@ -37,4 +40,6 @@ public class EnemyContext
     public EnemyAttack GetEnemyAttack() => _enemyAttack;
     
     public TargetDetector GetTargetDetector() => _playerDetector;
+
+    public bool UsingState(EnemyManager.EnemyState state) => _enemyManager.myStates.Contains(state);
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,6 +10,7 @@ public class EnemyManager : StateManager<EnemyManager.EnemyState>
     public enum EnemyState
     {
         Idle,
+        FocusIdle,
         Chase,
         Attack,
         Defend,
@@ -18,7 +20,7 @@ public class EnemyManager : StateManager<EnemyManager.EnemyState>
     }
 
     private EntityStatus _myStatus;
-    private SoulStatus _negativeStatus;
+    private NegativeStatus _negativeStatus;
     private NavMeshAgent _agent;
     private Animator _animator;
     private TargetDetector _playerDetector;
@@ -28,6 +30,7 @@ public class EnemyManager : StateManager<EnemyManager.EnemyState>
     private Vector2 _moveVelocity;
     private Vector2 _smoothDeltaPosition;
     public ParticleSystem _deathParticles;
+    public EnemyState[] myStates;
 
     void Awake()
     {
@@ -35,7 +38,7 @@ public class EnemyManager : StateManager<EnemyManager.EnemyState>
         _animator = GetComponent<Animator>();
         _playerDetector = GetComponentInChildren<TargetDetector>();
         _myStatus = GetComponent<EntityStatus>();
-        _negativeStatus = GetComponent<SoulStatus>();
+        _negativeStatus = GetComponent<NegativeStatus>();
         _enemyAttack = GetComponent<EnemyAttack>();
     }
 
@@ -44,17 +47,21 @@ public class EnemyManager : StateManager<EnemyManager.EnemyState>
         _states = new Dictionary<EnemyState, BaseState<EnemyState>>();
         
         _states.Add(EnemyState.Idle, new IdleState(_context, EnemyState.Idle));
-        _states.Add(EnemyState.Chase, new ChaseState(_context, EnemyState.Chase, _attackRange));
-        _states.Add(EnemyState.Attack, new AttackState(_context, EnemyState.Attack));
-        _states.Add(EnemyState.Spacing, new SpacingState(_context, EnemyState.Spacing, _attackRange));
+        _states.Add(EnemyState.FocusIdle, new IdleState(_context, EnemyState.Idle));
         _states.Add(EnemyState.Damage, new DamageState(_context, EnemyState.Damage));
         _states.Add(EnemyState.Death, new DeathState(_context, EnemyState.Death,
             _deathParticles));
+
+        if (myStates.Contains(EnemyState.Chase)) _states.Add(EnemyState.Chase, new ChaseState(_context, EnemyState.Chase, _attackRange));
+
+        if (myStates.Contains(EnemyState.Attack)) _states.Add(EnemyState.Attack, new AttackState(_context, EnemyState.Attack));
+
+        if(myStates.Contains(EnemyState.Spacing)) _states.Add(EnemyState.Spacing, new SpacingState(_context, EnemyState.Spacing, _attackRange));
     }
 
     void Start()
     {
-        _context = new EnemyContext(_myStatus, _negativeStatus, _agent, _animator, _playerDetector, transform, _enemyAttack);
+        _context = new EnemyContext(_myStatus, _negativeStatus, _agent, _animator, _playerDetector, transform, _enemyAttack, this);
         InitializeStates();
     }
 

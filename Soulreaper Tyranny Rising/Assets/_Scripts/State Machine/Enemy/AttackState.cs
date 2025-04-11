@@ -81,13 +81,15 @@ public class AttackState : EnemyBaseState
     public override EnemyManager.EnemyState GetNextState()
     {
         var status = _context.GetMyStatus();
+        var useSpacing = _context.UsingState(EnemyManager.EnemyState.Spacing);
 
         if (!status.IsAlive()) return EnemyManager.EnemyState.Death;
 
         if (status.HeavyFlinch()) return EnemyManager.EnemyState.Damage;
         else if (status.Flinch()) return EnemyManager.EnemyState.Damage;
-        
-        if (_attackOver) return EnemyManager.EnemyState.Spacing;
+
+        if (_attackOver && useSpacing) return EnemyManager.EnemyState.Spacing;
+        else return EnemyManager.EnemyState.Idle;
 
         return EnemyManager.EnemyState.Attack;
     }

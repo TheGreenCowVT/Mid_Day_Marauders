@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Kryz.CharacterStats;
 
 public class EntityStatus : MonoBehaviour
 {

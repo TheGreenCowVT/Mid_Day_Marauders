@@ -1,6 +1,7 @@
 using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(SphereCollider))]
 public class TargetDetector : MonoBehaviour
 {
     [SerializeField] private Transform _target;
@@ -33,6 +34,8 @@ public class TargetDetector : MonoBehaviour
     private void OnValidate()
     {
         _collider = GetComponent<SphereCollider>();
+        _collider.enabled = true;
+        _collider.isTrigger = true;
     }
 
     private void Update()

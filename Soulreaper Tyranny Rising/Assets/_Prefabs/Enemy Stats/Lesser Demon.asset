@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b755af1ad3992954c8338b555dee15ab, type: 3}
+  m_Name: Lesser Demon
+  m_EditorClassIdentifier: 
+  Alive: 1
+  MaxLifePoints:
+    BaseValue: 50
+  Violence:
+    BaseValue: 10
+  Avarice:
+    BaseValue: 10
+  PhysicalDefense:
+    BaseValue: 0.05
+  MagicalDefense:
+    BaseValue: 0.05
+  Poise:
+    BaseValue: 0
+  HypermodePower:
+    BaseValue: 0
+  Weakness: 040000000100000002000000
+  Resistance: 
+  Immunity: 
+  Absorbtion: 03000000
+  PoisonImmune: 0
+  BleedImmune: 0
+  Current_UpgradeResourcesDropped: 0
