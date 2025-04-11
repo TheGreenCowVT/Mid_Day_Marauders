@@ -7117,11 +7117,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 461c88bde0f929d4babc8b0aee335c0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _state: 0
-  _context:
-    _playerDetector: {fileID: 0}
-  _attackRange: 1.5
-  _deathParticles: {fileID: 887324517}
+  state: 0
+  context:
+    playerDetector: {fileID: 0}
+  attackRange: 1.5
+  moveSpeed: 3
+  delay: 0.25
+  deathParticles: {fileID: 0}
+  myStates: 
+  useRootMotion: 0
 --- !u!1 &9001176383545522357
 GameObject:
   m_ObjectHideFlags: 0
