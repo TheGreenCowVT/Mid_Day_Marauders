@@ -77,4 +77,4 @@ crashlytics-build.properties
 # Ignored folders to prevent adding too many assets
 /[Aa]ssets/[Ii]gnore/*
 /[Aa]ssets/Ignore.meta
-/[Uu]MotionEditor/
+/UMotionEditor/
