@@ -1,9 +1,11 @@
+using System.Linq;
 using UnityEngine;
 
-public class PlayerDetector : MonoBehaviour
+public class TargetDetector : MonoBehaviour
 {
-    [SerializeField] private Transform _player;
+    [SerializeField] private Transform _target;
     [SerializeField] private float _forgetTime; // Used to determine when a target is forgotten
+    [SerializeField] private bool _targetInSight;
     [SerializeField] private bool _playerDetected;
     [SerializeField] private bool _inRange;
     [SerializeField] private float _fov;
@@ -11,16 +13,19 @@ public class PlayerDetector : MonoBehaviour
     [SerializeField] private float _lineOfSightRange;
     [SerializeField] private bool _hasLOS;
 
-    [SerializeField] private float angleToPlayer;
-    [SerializeField] private Vector3 playerDir;
+    [SerializeField] private float angleToTarget;
+    [SerializeField] private Vector3 targetDir;
+
     public LayerMask lineOfSightMask;
 
     private float _currentForgetTime;
     private SphereCollider _collider;
 
+    [SerializeField] private string[] validTargets;
+
     private void Start()
     {
-        _playerDetected = false;
+        _targetInSight = false;
         _inRange = false;
         _currentForgetTime = 0;
     }
@@ -37,15 +42,15 @@ public class PlayerDetector : MonoBehaviour
 
         if (_inRange)
         {
-            playerDir = _player.transform.position - transform.position;
-            angleToPlayer = Vector3.Angle(playerDir, transform.forward);
+            targetDir = _target.transform.position - transform.position;
+            angleToTarget = Vector3.Angle(targetDir, transform.forward);
 
-            Debug.DrawRay(transform.position, playerDir);
+            Debug.DrawRay(transform.position, targetDir);
 
             RaycastHit hit;
-            if(Physics.Raycast(transform.position, playerDir, out hit))
+            if(Physics.Raycast(transform.position, targetDir, out hit))
             {
-                if (hit.collider.CompareTag("Player"))
+                if (validTargets.Contains(hit.collider.tag))
                 {
                     _hasLOS = true;
                 }
@@ -55,7 +60,7 @@ public class PlayerDetector : MonoBehaviour
                 }
             }
             
-            if(angleToPlayer <= _fov)
+            if(angleToTarget <= _fov)
             {
                 _insideFov = true;
             }
@@ -64,32 +69,36 @@ public class PlayerDetector : MonoBehaviour
                 _insideFov = false;
             }
 
-            _playerDetected = _insideFov | _hasLOS;
+            _targetInSight = _insideFov | _hasLOS;
         }
 
-        if (_playerDetected && !_inRange)
+        if (!_inRange)
         {
             _currentForgetTime += Time.deltaTime;
             if(_currentForgetTime >= _forgetTime)
             {
                 // Forget
+                _targetInSight = false;
                 _playerDetected = false;
+                _target = null;
                 _inRange = false;
             }
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (validTargets.Contains(other.tag) && _target == null)
         {
+             _target = other.transform;
             _inRange = true;
+            if(other.CompareTag("Player")) _playerDetected = true;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (validTargets.Contains(other.tag) && _target == other.transform)
         {
             _inRange = false;
         }
@@ -99,8 +108,15 @@ public class PlayerDetector : MonoBehaviour
 
     public void SeePlayer()
     {
-        _playerDetected = true;
+        // var playerTransform = GameManager.instance.GetPlayerTransform();
+        // Set _target = playerTransform
+        // set _currentForgetTime = _forgetTime;
+        // Set _inRange = true
     }
+
+    public bool HasTarget() => _targetInSight;
+
+    public Transform GetTarget() => _target;
 
     void OnDrawGizmosSelected()
     {

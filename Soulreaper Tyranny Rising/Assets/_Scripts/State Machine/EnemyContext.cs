@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class EnemyContext 
 {
-    public EnemyContext(EntityStatus myStatus, NegativeStatus negativeStatus, NavMeshAgent agent, Animator animator, PlayerDetector playerDetector, Transform transform, 
+    public EnemyContext(EntityStatus myStatus, NegativeStatus negativeStatus, NavMeshAgent agent, Animator animator, TargetDetector playerDetector, Transform transform, 
         EnemyAttack enemyAttack)
     {
         _agent = agent;
@@ -20,7 +20,7 @@ public class EnemyContext
     private EntityStatus _myStatus;
     private Animator _animator;
     private NavMeshAgent _agent;
-    [SerializeField] private PlayerDetector _playerDetector;
+    [SerializeField] private TargetDetector _playerDetector;
     private Transform _transform;
     private Transform _currentTarget;
     private EnemyAttack _enemyAttack;
@@ -36,5 +36,5 @@ public class EnemyContext
 
     public EnemyAttack GetEnemyAttack() => _enemyAttack;
     
-    public PlayerDetector GetPlayerDetector() => _playerDetector;
+    public TargetDetector GetTargetDetector() => _playerDetector;
 }
