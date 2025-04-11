@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Ignore/Frank_Slash_Pack/Demo/Frank_Slash_Pack.unity
+- path: Assets/_Scenes/SampleScene.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
