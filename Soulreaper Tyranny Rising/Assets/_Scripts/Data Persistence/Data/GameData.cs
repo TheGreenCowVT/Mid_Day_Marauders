@@ -6,12 +6,12 @@ public class GameData
 {
     public bool HypermodeUnlocked;
     public bool useGamePad, invertMouseH, invertMouseV, invertGamepadH,
-        invertGamepadV, forceSlotTwoUnlocked, forceSlotThreeUnlocked;
+        invertGamepadV;
 
     public int MaximumHypermodeAttacks;
     public int Current_UpgradeResources;
 
-    public int MaxLifePoints, MaxEndurancePoints;
+    public int MaxLifePoints;
     public int Evocation;
     public int Violence;
     public float PhysicalDefense;
@@ -34,7 +34,6 @@ public class GameData
     public GameData()
     {
         MaxLifePoints = 100;
-        MaxEndurancePoints = 100;
         Evocation = 1;
         Violence = 1;
         PhysicalDefense = 0.05f;
@@ -53,8 +52,6 @@ public class GameData
         invertMouseV = false;
         invertGamepadH = false;
         invertGamepadV = false;
-        forceSlotTwoUnlocked = false;
-        forceSlotThreeUnlocked = false;
 
         PoisonImmune = false;
         IgniteImmune = false;
